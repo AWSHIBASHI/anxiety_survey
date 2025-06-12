@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研究生线上社交焦虑测评</title>
+    <!-- 引入Tailwind CSS和Chart.js（通过CDN，无需安装） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 配置Tailwind颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#a5b4fc',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .question-card {
+                @apply bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-primary;
+            }
+            .radio-option {
+                @apply flex items-center p-2 rounded hover:bg-gray-100 transition-colors;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="max-w-4xl mx-auto">
+        <!-- 头部 -->
+        <header class="bg-primary text-white text-center py-8 rounded-t-lg">
+            <h1 class="text-2xl md:text-3xl font-bold">研究生线上社交焦虑测评</h1>
+            <p class="mt-2">本测评帮助您了解线上社交焦虑水平</p>
+        </header>
+
+        <!-- 指导语 -->
+        <section class="bg-white p-6 mb-6 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 text-primary">测评指导语</h2>
+            <p class="text-gray-600">
+                亲爱的研究生同学，您好！本测评旨在了解研究生群体在线上社交过程中的真实感受。
+                您的所有回答都会严格保密，仅用于学术研究。请根据自身实际情况，在每个题目后的选项中
+                选择最符合您情况的一项（1-5分，1=完全不符合，5=完全符合）。
+            </p>
+        </section>
+
+        <!-- 问卷表单 -->
+        <form id="anxiety-form" class="mb-6">
+            <div id="questions-container">
+                <!-- 题目将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 基本信息 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label for="user_name" class="block text-gray-700 mb-1">姓名（可选）</label>
+                    <input type="text" id="user_name" name="user_name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label for="gender" class="block text-gray-700 mb-1">性别（可选）</label>
+                    <select id="gender" name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="">未选择</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                        <option value="不愿透露">不愿透露</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="age" class="block text-gray-700 mb-1">年龄（可选）</label>
+                    <input type="number" id="age" name="age" min="18" max="50" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full transition duration-300 shadow-md">
+                    提交测评结果
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // 从API获取题目并渲染
+        fetch('/api/questionnaire')
+            .then(response => response.json())
+            .then(questions => {
+                const container = document.getElementById('questions-container');
+                questions.forEach(q => {
+                    const questionEl = document.createElement('div');
+                    questionEl.className = 'question-card';
+                    questionEl.innerHTML = `
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">${q.id}. ${q.text}</h3>
+                        <div class="space-y-2">
+                            <label class="radio-option">
+                                <input type="radio" name="q${q.id}" value="1" class="mr-2 h-4 w-4 text-primary">
+                                <span>1分（完全不符合）</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="q${q.id}" value="2" class="mr-2 h-4 w-4 text-primary">
+                                <span>2分（比较不符合）</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="q${q.id}" value="3" class="mr-2 h-4 w-4 text-primary">
+                                <span>3分（一般）</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="q${q.id}" value="4" class="mr-2 h-4 w-4 text-primary">
+                                <span>4分（比较符合）</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="q${q.id}" value="5" class="mr-2 h-4 w-4 text-primary">
+                                <span>5分（完全符合）</span>
+                            </label>
+                        </div>
+                    `;
+                    container.appendChild(questionEl);
+                });
+            })
+            .catch(error => {
+                console.error('获取题目失败:', error);
+                document.getElementById('questions-container').innerHTML = `
+                    <div class="text-center py-10">
+                        <p class="text-red-500">获取题目失败，请刷新页面重试</p>
+                    </div>
+                `;
+            });
+
+        // 表单提交处理
+        document.getElementById('anxiety-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            // 验证是否全部答题
+            let isComplete = true;
+            for (let i = 1; i <= 15; i++) {
+                if (!data[`q${i}`]) {
+                    isComplete = false;
+                    break;
+                }
+            }
+
+            if (!isComplete) {
+                alert('请完成所有题目后再提交！');
+                return;
+            }
+
+            // 显示加载状态
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm mr-2"></span>计算测评结果...';
+
+            // 提交到后端
+            fetch('/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(response => {
+                // 检查后端返回的success标志
+                if(response.success) {
+                    // 使用结果ID重定向到详细结果页
+                    window.location.href = `/result/${response.result_id}`;
+                } else {
+                    // 处理后端返回的错误
+                    throw new Error(response.error);
+                }
+            })
+            .catch(error => {
+                console.error('提交失败:', error);
+                alert('提交失败: ' + error.message); // 显示具体错误信息
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '提交测评结果';
+            });
+        });
+    </script>
+</body>
+</html>

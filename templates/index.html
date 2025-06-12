@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研究生线上社交焦虑测评 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- 头部 -->
+        <header class="bg-blue-600 text-white text-center py-8 rounded-t-lg shadow-md">
+            <h1 class="text-2xl md:text-3xl font-bold">研究生线上社交焦虑测评</h1>
+            <p class="mt-2">科学评估您的线上社交焦虑水平</p>
+        </header>
+
+        <!-- 主要内容 -->
+        <main class="mt-8 space-y-8">
+            <!-- 测评介绍卡片 -->
+            <div class="bg-white rounded-lg card-shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-blue-600">测评简介</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    本测评基于《研究生线上社交焦虑问卷》，旨在帮助您了解自己在线上社交（如微信、QQ、线上会议等场景）中的焦虑水平。
+                    问卷共15道题目，预计耗时5分钟。完成后将为您提供：
+                </p>
+                <ul class="mt-4 list-disc pl-5 text-gray-600 space-y-1">
+                    <li>线上社交焦虑总分与常模对比</li>
+                    <li>三个维度（评价恐惧、隐私担忧、交往焦虑）的详细分析</li>
+                    <li>基于得分的个性化建议</li>
+                </ul>
+            </div>
+
+            <!-- 测评流程卡片 -->
+            <div class="bg-white rounded-lg card-shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-blue-600">测评流程</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-blue-600">1</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">填写问卷</h3>
+                        <p class="text-gray-600">根据实际情况回答15道题目</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-blue-600">2</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">提交测评</h3>
+                        <p class="text-gray-600">点击按钮提交，系统自动计算结果</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-blue-600">3</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">查看报告</h3>
+                        <p class="text-gray-600">获取详细的测评结果和建议</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 开始测评按钮 -->
+            <div class="text-center">
+                <a href="/questionnaire" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition duration-300 card-shadow">
+                    开始测评
+                </a>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="mt-12 py-6 border-t border-gray-200 text-center text-gray-500">
+            <p>研究生线上社交焦虑测评系统 &copy; 2025</p>
+            <p class="mt-1 text-sm">本测评仅用于学术研究，数据严格保密</p>
+        </footer>
+    </div>
+</body>
+</html>

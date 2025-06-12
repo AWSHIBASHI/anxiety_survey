@@ -1,0 +1,23 @@
+/* 在 static/css/styles.css 或你的样式文件中添加 */
+.level-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.level-low {
+    background-color: #4ade80; /* 绿色 */
+    color: #065f46;
+}
+
+.level-medium {
+    background-color: #facc15; /* 黄色 */
+    color: #854d0e;
+}
+
+.level-high {
+    background-color: #f87171; /* 红色 */
+    color: #991b1b;
+}

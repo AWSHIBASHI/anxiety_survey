@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研究生线上社交焦虑测评 - 历史记录</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .history-card {
+                @apply bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-blue-500;
+            }
+            .level-tag {
+                @apply px-2 py-1 rounded-full text-xs font-medium;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- 头部 -->
+        <header class="bg-blue-600 text-white text-center py-8 rounded-t-lg shadow-md">
+            <h1 class="text-2xl md:text-3xl font-bold">测评历史记录</h1>
+            <p class="mt-2">查看您的历史测评结果</p>
+        </header>
+
+        <!-- 主要内容 -->
+        <main class="mt-8 space-y-8">
+            <!-- 用户信息卡片 -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-blue-600">用户：{{ user_name }}</h2>
+                <p class="text-gray-600">以下是您的线上社交焦虑测评历史记录，点击某次记录可查看详细报告。</p>
+            </div>
+
+            <!-- 历史记录列表 -->
+            {% if history and history|length > 0 %}
+            <div class="space-y-4">
+                {% for result in history %}
+                <div class="history-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-semibold text-gray-800">{{ result.create_time }}</h3>
+                            <p class="text-gray-600 mt-1">总分：{{ result.total_score }}/75</p>
+                        </div>
+                        <span class="level-tag {{ getLevelClass(result.total_level) }}">
+                            {{ result.total_level }}
+                        </span>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <a href="/result?total_score={{ result.total_score }}&dimension1={{ result.dimension1 }}&dimension2={{ result.dimension2 }}&dimension3={{ result.dimension3 }}&total_level={{ result.total_level }}&user_name={{ user_name }}"
+                           class="text-blue-600 hover:text-blue-800 font-medium">
+                            查看详情 <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <p class="text-gray-500">暂无测评历史记录</p>
+                <a href="/" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition duration-300">
+                    去做测评
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- 返回按钮 -->
+            <div class="text-center">
+                <a href="/" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-8 rounded-full transition duration-300 shadow-md">
+                    返回首页
+                </a>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="mt-12 py-6 border-t border-gray-200 text-center text-gray-500">
+            <p>研究生线上社交焦虑测评系统 &copy; 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // 引入Font Awesome图标（如需显示图标）
+        const script = document.createElement('script');
+        script.src = 'https://kit.fontawesome.com/a076d05399.js';
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

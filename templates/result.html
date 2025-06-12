@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>线上社交焦虑测评 - 结果</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="container mx-auto p-6">
+    <!-- header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold">测评结果报告</h1>
+      <p class="text-gray-600 mt-2">已根据您填写的回答生成</p>
+    </div>
+
+    <!-- info banner -->
+    <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center mb-6">
+      <div>
+        <span class="font-medium">姓名：</span>{{ result.user_name or '未提供' }}
+        <span class="font-medium ml-4">性别：</span>{{ result.gender or '未提供' }}
+        <span class="font-medium ml-4">年龄：</span>{{ result.age or '未提供' }}
+      </div>
+      <div class="text-gray-500">{{ now }}</div>
+    </div>
+
+    <!-- total score section -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+      <h2 class="text-2xl font-semibold mb-4">总分 & 焦虑等级</h2>
+      <div class="md:flex md:space-x-6">
+        <div class="md:flex-1">
+          <canvas id="chartTotal" height="200"></canvas>
+        </div>
+        <div class="md:flex-1 mt-6 md:mt-0">
+          <p class="text-xl"><span class="font-bold text-blue-600">{{ result.total_score }}</span>/75 分</p>
+          <p class="mt-2">焦虑等级：
+            <span class="inline-block px-3 py-1 rounded-full font-medium text-white bg-blue-500">
+              {{ result.total_level }}
+            </span>
+          </p>
+          <p class="mt-2">常模百分比：<span class="font-medium">{{ result.total_percentile }}</span></p>
+        </div>
+      </div>
+      <p class="mt-4 text-gray-700">
+        {% if result.total_level == '低水平焦虑' %}轻度放松，社交自如。
+        {% elif result.total_level == '中等水平焦虑' %}有轻微焦虑，但基本可应对日常线上社交。
+        {% else %}建议关注与咨询，以助减轻明显焦虑。{% endif %}
+      </p>
+    </div>
+
+    <!-- radar chart -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+      <h2 class="text-2xl font-semibold mb-4">细分维度表现</h2>
+      <canvas id="chartRadar" height="300"></canvas>
+    </div>
+
+    <!-- dimension details -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+      <h2 class="text-2xl font-semibold mb-4">维度评分细节</h2>
+      <div class="space-y-4">
+        {% for dim in [
+          {'name':'评价恐惧','score':result.dimension1,'level':result.dim1_level,'perc':result.dim1_percentile},
+          {'name':'隐私担忧','score':result.dimension2,'level':result.dim2_level,'perc':result.dim2_percentile},
+          {'name':'交往焦虑','score':result.dimension3,'level':result.dim3_level,'perc':result.dim3_percentile}] %}
+          <div class="border-l-4 pl-4 py-2 rounded bg-gray-50">
+            <div class="flex justify-between">
+              <h3 class="font-semibold">{{ dim.name }}：{{ dim.score }}</h3>
+              <span class="px-2 py-1 rounded-full text-sm bg-green-200">{{ dim.level }}</span>
+            </div>
+            <p class="mt-1 text-gray-600">常模百分比：{{ dim.perc }}</p>
+            <p class="mt-2 text-gray-700">
+              {% if dim.level == '低水平焦虑' %}
+                表现良好，继续保持积极社交态度。
+              {% elif dim.level == '中等水平焦虑' %}
+                略有焦虑，可通过预想对话场景缓解。
+              {% else %}
+                焦虑偏高，建议循序渐进增强自信，必要时寻求支持。
+              {% endif %}
+            </p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="text-center space-x-4 mt-8">
+      <button id="btnShare" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+        分享结果
+      </button>
+
+      <button id="btnExportPDF" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+        导出 PDF
+      </button>
+
+      <a href="/" class="bg-gray-300 px-6 py-2 rounded hover:bg-gray-400">
+        返回首页
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // 时间赋值已有后端渲染 now
+    const res = {
+      total: {{ result.total_score }},
+      dim1: {{ result.dimension1 }}, dim2: {{ result.dimension2 }}, dim3: {{ result.dimension3 }}
+    };
+
+    // 总分图
+    new Chart(document.getElementById('chartTotal'), {
+      type:'bar',
+      data:{
+        labels:['您的得分','25','50','75分位'],
+        datasets:[{data:[res.total,56,63,67],
+          backgroundColor:['#3b82f6','#a5b4fc','#6b7280','#4b5563']
+        }]
+      },
+      options:{scales:{y:{beginAtZero:true,max:75}}}
+    });
+
+    // 雷达图
+    new Chart(document.getElementById('chartRadar'), {
+      type:'radar',
+      data:{
+        labels:['评价恐惧','隐私担忧','交往焦虑'],
+        datasets:[
+          {label:'您的得分',data:[res.dim1,res.dim2,res.dim3],
+            backgroundColor:'rgba(59,130,246,0.2)',borderColor:'#3b82f6'},
+          {label:'常模中位',data:[22,17,25],
+            backgroundColor:'rgba(165,180,252,0.2)',borderColor:'#a5b4fc'}
+        ]
+      },
+      options:{scales:{r:{beginAtZero:true,max:30}}}
+    });
+
+      // 分享按钮逻辑
+    document.getElementById("btnShare").onclick = () => {
+      const dummyInput = document.createElement("input");
+      dummyInput.value = window.location.href;
+      document.body.appendChild(dummyInput);
+      dummyInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummyInput);
+      alert("测评链接已复制，可粘贴分享给他人");
+    };
+
+    // 导出 PDF 按钮逻辑
+    document.getElementById("btnExportPDF").onclick = function () {
+      const element = document.querySelector('.container');  // 推荐只导出 container 区域
+      const clone = element.cloneNode(true); // 深拷贝避免原始 DOM 被干扰
+      clone.style.width = "100%"; // 强制宽度（避免被父容器限制）
+      const opt = {
+        html2canvas: {
+          scale: 3,                     // 提高渲染精度（避免模糊）
+          scrollY: 0,                   // 禁止滚动偏移
+          windowWidth: element.scrollWidth, // 按内容实际宽度渲染
+          useCORS: true,                // 允许跨域图片
+          allowTaint: true,             // 允许加载外部资源
+          logging: true,                // 开启调试日志（查看渲染问题）
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    };
+  </script>
+</body>
+</html>
